@@ -4,8 +4,8 @@
  */
 
 import { motion, useScroll, useTransform } from 'motion/react';
-import { useRef } from 'react';
-import { ArrowRight, Code2, Globe, LayoutTemplate, Mail, MonitorSmartphone, Palette, Sparkles, Zap, Star, Quote, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { ArrowRight, Code2, Globe, LayoutTemplate, Mail, MonitorSmartphone, Palette, Sparkles, Zap, Star, Quote, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -30,6 +30,31 @@ export default function App() {
   
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const testimonials = [
+    {
+      quote: "Bremnet completely transformed our digital presence. Our conversion rate doubled within the first month of launching the new platform.",
+      author: "Sarah Jenkins",
+      role: "CMO, Aura Finance",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150"
+    },
+    {
+      quote: "The level of polish and technical expertise the team brought to our SaaS product was unmatched. They are true partners.",
+      author: "David Chen",
+      role: "Founder, Nexus AI",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150"
+    },
+    {
+      quote: "From brand identity to the final e-commerce build, Bremnet delivered excellence at every single touchpoint.",
+      author: "Emma Roberts",
+      role: "Director, Lumina Studio",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150&h=150"
+    }
+  ];
+
+  const nextTestimonial = () => setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+  const prevTestimonial = () => setActiveTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   return (
     <div className="min-h-screen font-sans selection:bg-indigo-500/30">
@@ -66,11 +91,6 @@ export default function App() {
             initial="initial"
             animate="whileInView"
           >
-            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-xs font-medium text-indigo-200 mb-8 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Premium Web Design Agency</span>
-            </motion.div>
-            
             <motion.h1 variants={fadeIn} className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter leading-[1.05] mb-8 text-balance">
               Digital experiences that <span className="text-gradient-accent">demand attention.</span>
             </motion.h1>
@@ -298,89 +318,129 @@ export default function App() {
             <p className="text-zinc-400 text-lg">Don't just take our word for it. Hear from the visionary leaders we've partnered with.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                quote: "Bremnet completely transformed our digital presence. Our conversion rate doubled within the first month of launching the new platform.",
-                author: "Sarah Jenkins",
-                role: "CMO, Aura Finance",
-                image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150"
-              },
-              {
-                quote: "The level of polish and technical expertise the team brought to our SaaS product was unmatched. They are true partners.",
-                author: "David Chen",
-                role: "Founder, Nexus AI",
-                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150"
-              },
-              {
-                quote: "From brand identity to the final e-commerce build, Bremnet delivered excellence at every single touchpoint.",
-                author: "Emma Roberts",
-                role: "Director, Lumina Studio",
-                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150&h=150"
-              }
-            ].map((testimonial, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-                className="glass-card p-8 rounded-2xl flex flex-col h-full"
+          <div className="relative max-w-4xl mx-auto">
+            <div className="overflow-hidden relative rounded-2xl">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${activeTestimonial * 100}%)` }}
               >
-                <div className="flex gap-1 mb-6">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-indigo-500 text-indigo-500" />
-                  ))}
-                </div>
-                <Quote className="w-8 h-8 text-white/10 mb-4" />
-                <p className="text-zinc-300 text-lg leading-relaxed mb-8 flex-1">"{testimonial.quote}"</p>
-                <div className="flex items-center gap-4 mt-auto">
-                  <img src={testimonial.image} alt={testimonial.author} className="w-12 h-12 rounded-full object-cover ring-2 ring-white/10" referrerPolicy="no-referrer" />
-                  <div>
-                    <div className="font-semibold text-white">{testimonial.author}</div>
-                    <div className="text-sm text-zinc-400">{testimonial.role}</div>
+                {testimonials.map((testimonial, i) => (
+                  <div key={i} className="w-full flex-shrink-0 px-4">
+                    <div className="glass-card p-8 md:p-12 rounded-2xl flex flex-col items-center text-center">
+                      <div className="flex gap-1 mb-8">
+                        {[...Array(5)].map((_, j) => (
+                          <Star key={j} className="w-5 h-5 fill-indigo-500 text-indigo-500" />
+                        ))}
+                      </div>
+                      <Quote className="w-10 h-10 text-white/10 mb-6" />
+                      <p className="text-zinc-300 text-xl md:text-2xl leading-relaxed mb-10 max-w-3xl">"{testimonial.quote}"</p>
+                      <div className="flex flex-col items-center gap-4 mt-auto">
+                        <img src={testimonial.image} alt={testimonial.author} className="w-16 h-16 rounded-full object-cover ring-2 ring-white/10" referrerPolicy="no-referrer" />
+                        <div>
+                          <div className="font-semibold text-white text-lg">{testimonial.author}</div>
+                          <div className="text-sm text-zinc-400">{testimonial.role}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                ))}
+              </div>
+            </div>
+            
+            <button onClick={prevTestimonial} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-6 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors backdrop-blur-md z-10">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button onClick={nextTestimonial} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-6 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors backdrop-blur-md z-10">
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => setActiveTestimonial(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${i === activeTestimonial ? 'bg-indigo-500' : 'bg-white/20 hover:bg-white/40'}`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Process Section */}
-      <section id="process" className="py-24 md:py-32 border-y border-white/5 bg-zinc-900/20">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div {...fadeIn} className="mb-20 text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-6 text-gradient">How we deliver excellence.</h2>
-            <p className="text-zinc-400 text-lg">A streamlined, transparent process designed to turn your vision into a high-performing reality without the friction.</p>
-          </motion.div>
+      <section id="process" className="py-24 md:py-32 border-y border-white/5 bg-zinc-950 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 relative">
-            <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
             
-            {[
-              { step: "01", title: "Discovery", desc: "We dive deep into your brand, audience, and goals to forge a strategic roadmap." },
-              { step: "02", title: "Design", desc: "Crafting wireframes and high-fidelity prototypes that perfectly align with your identity." },
-              { step: "03", title: "Development", desc: "Writing clean, scalable code to bring the designs to life with flawless performance." },
-              { step: "04", title: "Launch", desc: "Rigorous testing, optimization, and a seamless deployment to the world." }
-            ].map((item, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-                className="relative pt-8 md:pt-0"
-              >
-                <div className="w-14 h-14 rounded-full bg-zinc-950 border-2 border-indigo-500/30 flex items-center justify-center text-lg font-display font-bold mb-6 relative z-10 mx-auto md:mx-0 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-purple-400">{item.step}</span>
-                </div>
-                <div className="text-center md:text-left">
-                  <h3 className="text-xl font-display font-semibold mb-3 text-white">{item.title}</h3>
-                  <p className="text-zinc-400 leading-relaxed">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+            {/* Sticky Left Column */}
+            <div className="lg:col-span-5 relative">
+              <div className="lg:sticky lg:top-32">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-zinc-300 mb-6">
+                    <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Our Process</span>
+                  </div>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-6 text-gradient">
+                    How we deliver excellence.
+                  </h2>
+                  <p className="text-zinc-400 text-lg leading-relaxed mb-8">
+                    A streamlined, transparent process designed to turn your vision into a high-performing reality without the friction. We work closely with you at every step to ensure perfection.
+                  </p>
+                  <button className="hidden lg:inline-flex items-center gap-2 text-sm font-medium text-white hover:text-indigo-400 transition-colors group">
+                    Start your project <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Scrolling Right Column */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              {[
+                { step: "01", title: "Discovery & Strategy", desc: "We dive deep into your brand, audience, and goals. We analyze your competitors and forge a strategic roadmap that sets the foundation for success.", icon: Globe },
+                { step: "02", title: "UI/UX Design", desc: "Crafting wireframes and high-fidelity prototypes that perfectly align with your identity. We focus on user journeys that maximize conversions.", icon: Palette },
+                { step: "03", title: "Development", desc: "Writing clean, scalable code to bring the designs to life. We ensure flawless performance, accessibility, and responsive behavior across all devices.", icon: Code2 },
+                { step: "04", title: "Launch & Scale", desc: "Rigorous testing, optimization, and a seamless deployment to the world. Post-launch, we monitor performance and iterate for continuous growth.", icon: Zap }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                  className="glass-card p-8 md:p-10 rounded-3xl relative overflow-hidden group hover:bg-white/[0.04] transition-colors"
+                >
+                  {/* Hover Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-transparent to-purple-500/0 group-hover:from-indigo-500/10 group-hover:to-purple-500/10 transition-colors duration-500"></div>
+                  
+                  {/* Big Number Background */}
+                  <div className="absolute -top-6 -right-6 text-8xl font-display font-bold text-white/[0.03] group-hover:text-white/[0.05] transition-colors duration-500 pointer-events-none select-none">
+                    {item.step}
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:border-indigo-500/30 transition-all duration-500 shadow-lg">
+                      <item.icon className="w-6 h-6 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
+                    </div>
+                    <h3 className="text-2xl font-display font-semibold mb-4 text-white flex items-center gap-4">
+                      <span className="text-sm font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md">{item.step}</span>
+                      {item.title}
+                    </h3>
+                    <p className="text-zinc-400 leading-relaxed text-lg">
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
